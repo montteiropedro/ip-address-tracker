@@ -19,7 +19,7 @@ interface LocationProps {
 
 function App() {
   const [locationData, setLocationData] = useState<LocationProps | null>(null);
-  const [inputAddressDomain, setInputAddressDomain] = useState<string>('');
+  const [AddressDomainValue, setAddressDomainValue] = useState<string>('');
 
   useEffect(() => {
     try {
@@ -40,15 +40,15 @@ function App() {
 
     let paramType;
     
-    if (ipv4regex.test(inputAddressDomain) || ipv6regex.test(inputAddressDomain)) {
+    if (ipv4regex.test(AddressDomainValue) || ipv6regex.test(AddressDomainValue)) {
       paramType = 'ipAddress';
     }
-    else if (domainRegex.test(inputAddressDomain)) {
+    else if (domainRegex.test(AddressDomainValue)) {
       paramType = 'domain';
     }
 
     try {
-      await axios.get(`https://geo.ipify.org/api/v2/country,city?apiKey=${import.meta.env.VITE_GEOAPI_KEY}&${paramType}=${inputAddressDomain}`)
+      await axios.get(`https://geo.ipify.org/api/v2/country,city?apiKey=${import.meta.env.VITE_GEOAPI_KEY}&${paramType}=${AddressDomainValue}`)
         .then(({ data }) => setLocationData(data));
     }
     catch (err) {
@@ -58,38 +58,47 @@ function App() {
 
   return (
     <div className="flex flex-col">
-      <div className="py-4 flex flex-col items-center bg-top-pattern bg-cover bg-no-repeat">
-        <h1 className="mb-4 text-xl font-medium text-white">IP Address Tracker</h1>
+      <div className="relative z-10 h-[187px] bg-top-pattern bg-cover bg-no-repeat">
+        <div className="lg:px-0 px-4 absolute top-4 left-1/2 -translate-x-1/2 flex flex-col items-center">
+          <h1 className="mb-4 text-xl font-medium text-white">IP Address Tracker</h1>
+          
+          <form
+            onSubmit={handleSearchLocation}
+            className="lg:mb-8 mb-4 w-[min(100%,384px)] flex"
+          >
+            <input
+              type="text"
+              name="ip-domain"
+              id="ip-domain"
+              placeholder="Search for any IP address or domain"
+              onChange={(e) => setAddressDomainValue(e.target.value)}
+              className="flex-1 text-sm px-4 border rounded-l-lg placeholder:text-sm"
+            />
+            <button type="submit" className="p-2 w-11 text-white bg-black rounded-r-lg">
+              <i className="fa-solid fa-angle-right"></i>
+            </button>
+          </form>
 
-        <form
-          onSubmit={handleSearchLocation}
-          className="mb-6 w-[384px] flex"
-        >
-          <input
-            type="text"
-            name="ip-domain"
-            id="ip-domain"
-            placeholder="Search for any IP address or domain"
-            onChange={(e) => setInputAddressDomain(e.target.value)}
-            className="flex-1 text-sm px-4 border rounded-l-lg placeholder:text-sm"
-          />
-
-          <button type="submit" className="p-2 w-11 text-white bg-black rounded-r-lg">
-            <i className="fa-solid fa-angle-right"></i>
-          </button>
-        </form>
-
-        {locationData && (
-          <AddressInfoBar
-            key={locationData.ip}
-            ip={locationData.ip}
-            city={locationData.location.city}
-            state={locationData.location.region}
-            country={locationData.location.country}
-            timezone={locationData.location.timezone}
-            isp={locationData.isp}
-          />
-        )}
+          {locationData ? (
+            <AddressInfoBar
+              ip={locationData.ip}
+              city={locationData.location.city}
+              state={locationData.location.region}
+              country={locationData.location.country}
+              timezone={locationData.location.timezone}
+              isp={locationData.isp}
+            />
+          ) : (
+            <AddressInfoBar
+              ip="0.0.0.0"
+              city="City"
+              state="State"
+              country="Country"
+              timezone="00:00"
+              isp="Internet service provider"
+            />
+          )}
+        </div>
       </div>
       
       {locationData && (

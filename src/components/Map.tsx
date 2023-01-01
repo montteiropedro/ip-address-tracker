@@ -32,7 +32,7 @@ export function Map({ lat, lng, isp }: MapProps) {
       center={[lat, lng]}
       zoom={13}
       scrollWheelZoom={true}
-      className="w-full h-[calc(100vh-250px)] transition-all"
+      className="z-0 w-full h-[calc(100vh-187px)] transition-all"
     >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
