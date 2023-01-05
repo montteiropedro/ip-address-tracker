@@ -23,7 +23,13 @@ function App() {
 
   useEffect(() => {
     try {
-      axios.get(`https://geo.ipify.org/api/v2/country,city?apiKey=${import.meta.env.VITE_GEOAPI_KEY}`)
+      axios.get(`http://localhost:8888/cors-proxy/?apiKey=${import.meta.env.VITE_GEOAPI_KEY}`, {
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Headers' : 'Content-Type',
+          'Access-Control-Allow-Methods': 'GET'
+        },
+      })
         .then(({ data }) => setLocationData(data));
     }
     catch (err) {

@@ -30,3 +30,6 @@ dist-ssr
 # Avoid accidental XD or Figma upload if you convert the design file
 *.xd
 *.fig
+
+# Local Netlify folder
+.netlify
