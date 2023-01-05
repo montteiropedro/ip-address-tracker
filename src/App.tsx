@@ -78,7 +78,7 @@ function App() {
             <button
               type="submit"
               aria-label="search"
-              className="p-2 w-11 text-white bg-black rounded-r-lg"
+              className="p-2 w-11 text-white bg-black hover:bg-[#2b2b2b] rounded-r-lg"
             >
               <i className="fa-solid fa-angle-right"></i>
             </button>
