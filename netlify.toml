@@ -1,5 +1,13 @@
+[build]
+  command = "npm run build"
+	functions = "functions"
+	publish = "dist"
+
+[functions]
+  node_bundler = "esbuild"
+
 [[redirects]]
-  from = "/cors-proxy/*"
-  to = "https://geo.ipify.org/api/v2/country,city:splat"
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
   status = 200
   force = true

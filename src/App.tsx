@@ -2,8 +2,6 @@ import { useEffect, useState, FormEvent } from "react";
 import { AddressInfoBar } from "./components/AddressInfoBar"
 import { Map } from "./components/Map"
 
-import axios from 'axios';
-
 interface LocationProps {
   ip: string;
   isp: string;
@@ -11,6 +9,7 @@ interface LocationProps {
     country: string;
     region: string;
     city: string;
+    postalCode: string;
     lat: number,
     lng: number,
     timezone: string,
@@ -22,19 +21,17 @@ function App() {
   const [AddressDomainValue, setAddressDomainValue] = useState<string>('');
 
   useEffect(() => {
-    try {
-      axios.get(`${import.meta.env.VITE_BASE_URL}/cors-proxy/?apiKey=${import.meta.env.VITE_GEOAPI_KEY}`, {
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Headers' : 'Content-Type',
-          'Access-Control-Allow-Methods': 'GET'
-        },
-      })
-        .then(({ data }) => setLocationData(data));
-    }
-    catch (err) {
-      console.error('Error trying to get the initial location data: ', err);
-    }
+    (async () => {
+      try {
+        const res = await fetch('/api/getFirstLocation')
+          .then(res => res.json());
+
+        setLocationData(res);
+      }
+      catch (err) {
+        console.error('Error trying to get the initial location data');
+      }
+    })();
   }, []);
 
   async function handleSearchLocation(e: FormEvent) {
@@ -44,21 +41,31 @@ function App() {
     const ipv6regex = /^((?:[0-9A-Fa-f]{1,4}))((?::[0-9A-Fa-f]{1,4}))*::((?:[0-9A-Fa-f]{1,4}))((?::[0-9A-Fa-f]{1,4}))*|((?:[0-9A-Fa-f]{1,4}))((?::[0-9A-Fa-f]{1,4})){7}$/gm;
     const domainRegex = /(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]/gm;
 
-    let paramType;
+    let searchType = '';
     
     if (ipv4regex.test(AddressDomainValue) || ipv6regex.test(AddressDomainValue)) {
-      paramType = 'ipAddress';
+      searchType = 'ipAddress';
     }
     else if (domainRegex.test(AddressDomainValue)) {
-      paramType = 'domain';
+      searchType = 'domain';
     }
 
     try {
-      await axios.get(`https://geo.ipify.org/api/v2/country,city?apiKey=${import.meta.env.VITE_GEOAPI_KEY}&${paramType}=${AddressDomainValue}`)
-        .then(({ data }) => setLocationData(data));
+      const res = await fetch('/api/getLocation', {
+        method: 'POST',
+        body: JSON.stringify({
+          searchType,
+          AddressDomainValue
+        })
+      })
+        .then(res => res.json());
+
+      if (res.code === 400) return;
+
+      setLocationData(res);
     }
     catch (err) {
-      console.error('Error trying to get the location data: ', err);
+      console.error('Error trying to get the location data');
     }
   }
 
@@ -95,7 +102,7 @@ function App() {
               ip={locationData.ip}
               city={locationData.location.city}
               state={locationData.location.region}
-              country={locationData.location.country}
+              postalCode={locationData.location.postalCode}
               timezone={locationData.location.timezone}
               isp={locationData.isp}
             />
@@ -104,7 +111,7 @@ function App() {
               ip="0.0.0.0"
               city="City"
               state="State"
-              country="Country"
+              postalCode="0000"
               timezone="00:00"
               isp="Internet service provider"
             />
