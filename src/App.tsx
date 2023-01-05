@@ -74,7 +74,12 @@ function App() {
               onChange={(e) => setAddressDomainValue(e.target.value)}
               className="flex-1 text-sm px-4 border rounded-l-lg placeholder:text-sm"
             />
-            <button type="submit" className="p-2 w-11 text-white bg-black rounded-r-lg">
+
+            <button
+              type="submit"
+              aria-label="search"
+              className="p-2 w-11 text-white bg-black rounded-r-lg"
+            >
               <i className="fa-solid fa-angle-right"></i>
             </button>
           </form>
