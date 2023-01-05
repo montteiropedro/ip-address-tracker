@@ -26,10 +26,12 @@ function App() {
         const res = await fetch('/api/getFirstLocation')
           .then(res => res.json());
 
+        if (res.code === 400 || res.error) throw new Error();
+
         setLocationData(res);
       }
       catch (err) {
-        console.error('Error trying to get the initial location data');
+        alert('Error trying to get the initial location data');
       }
     })();
   }, []);
@@ -60,12 +62,12 @@ function App() {
       })
         .then(res => res.json());
 
-      if (res.code === 400) return;
+      if (res.code === 400 || res.error) throw new Error();
 
       setLocationData(res);
     }
     catch (err) {
-      console.error('Error trying to get the location data');
+      alert('Error trying to get the location data');
     }
   }
 
