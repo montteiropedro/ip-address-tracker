@@ -23,7 +23,7 @@ function App() {
 
   useEffect(() => {
     try {
-      axios.get(`http://localhost:8888/cors-proxy/?apiKey=${import.meta.env.VITE_GEOAPI_KEY}`, {
+      axios.get(`${import.meta.env.VITE_BASE_URL}/cors-proxy/?apiKey=${import.meta.env.VITE_GEOAPI_KEY}`, {
         headers: {
           'Access-Control-Allow-Origin': '*',
           'Access-Control-Allow-Headers' : 'Content-Type',
