@@ -28,6 +28,7 @@ function App() {
 
         if (res.code === 400 || res.error) throw new Error();
 
+        console.log(res);
         setLocationData(res);
       }
       catch (err) {
